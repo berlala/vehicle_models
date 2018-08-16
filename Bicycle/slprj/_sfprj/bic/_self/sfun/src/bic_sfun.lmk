@@ -1,0 +1,39 @@
+CC     = "D:\Program Files (x86)\MATLAB\R2014b\sys\lcc\bin\lcc.exe"
+LD     = "D:\Program Files (x86)\MATLAB\R2014b\sys\lcc\bin\lcclnk.exe"
+LIBCMD = "D:\Program Files (x86)\MATLAB\R2014b\sys\lcc\bin\lcclib.exe"
+CFLAGS = -c -Zp8 -DMATLAB_MEX_FILE -noregistrylookup 
+LDFLAGS = -s -dll -L"D:\Program Files (x86)\MATLAB\R2014b\sys\lcc\lib" 
+LIBFLAGS = 
+
+OBJECTS = \
+	"bic_sfun.obj"\
+	"c2_bic.obj"\
+	"bic_sfun_registry.obj"\
+	"lccstub.obj"\
+	"D:\Program Files (x86)\MATLAB\R2014b\sys\lcc\mex\lccdef.def"\
+	"D:\Program Files (x86)\MATLAB\R2014b\extern\lib\win32\lcc\sf_runtime.lib"\
+	"D:\Program Files (x86)\MATLAB\R2014b\extern\lib\win32\lcc\libmwblas.lib"\
+	"D:\Program Files (x86)\MATLAB\R2014b\extern\lib\win32\lcc\libmx.lib"\
+	"D:\Program Files (x86)\MATLAB\R2014b\extern\lib\win32\lcc\libmex.lib"\
+	"D:\Program Files (x86)\MATLAB\R2014b\extern\lib\win32\lcc\libmat.lib"\
+	"D:\Program Files (x86)\MATLAB\R2014b\extern\lib\win32\lcc\libfixedpoint.lib"\
+	"D:\Program Files (x86)\MATLAB\R2014b\extern\lib\win32\lcc\libut.lib"\
+	"D:\Program Files (x86)\MATLAB\R2014b\extern\lib\win32\lcc\libmwmathutil.lib"\
+	"D:\Program Files (x86)\MATLAB\R2014b\extern\lib\win32\lcc\libemlrt.lib"\
+	"D:\Program Files (x86)\MATLAB\R2014b\extern\lib\win32\lcc\libmwsl_log_load_blocks.lib"\
+	"D:\Program Files (x86)\MATLAB\R2014b\extern\lib\win32\lcc\libmwsimulink.lib"\
+	"D:\Program Files (x86)\MATLAB\R2014b\lib\win32\libmwipp.lib"\
+
+INCLUDE_PATH= -I"D:\Program Files (x86)\MATLAB\R2014b\sys\lcc\include"  -I"D:\Program Files (x86)\MATLAB\R2014b\extern\include"  -I"D:\Program Files (x86)\MATLAB\R2014b\simulink\include"  -I"D:\Program Files (x86)\MATLAB\R2014b\stateflow\c\mex\include"  -I"D:\Program Files (x86)\MATLAB\R2014b\rtw\c\src"  -I"D:\FF_Project_Matlab\Model\Bicycle\slprj\_sfprj\bic\_self\sfun\src" 
+ 
+
+bic_sfun.mexw32 : $(MAKEFILE) $(OBJECTS)
+	$(LD) $(LDFLAGS) -o bic_sfun.mexw32 @bic_sfun.lmko
+bic_sfun.obj :	"bic_sfun.c"
+	$(CC) $(CFLAGS) $(INCLUDE_PATH) "bic_sfun.c"
+c2_bic.obj :	"c2_bic.c"
+	$(CC) $(CFLAGS) $(INCLUDE_PATH) "c2_bic.c"
+bic_sfun_registry.obj :	"bic_sfun_registry.c"
+	$(CC) $(CFLAGS) $(INCLUDE_PATH) "bic_sfun_registry.c"
+lccstub.obj :	"D:\Program Files (x86)\MATLAB\R2014b\sys\lcc\mex\lccstub.c"
+	$(CC) $(CFLAGS) $(INCLUDE_PATH) "D:\Program Files (x86)\MATLAB\R2014b\sys\lcc\mex\lccstub.c"
