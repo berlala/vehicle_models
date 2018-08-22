@@ -9,5 +9,5 @@ Control Design
 
 bic_lego.slx
 >Model Predictive Control of a Mobile Robot Using
-Linearization
+Linearization  
 >http://www.ece.ufrgs.br/~fetter/mechrob04_553.pdf
