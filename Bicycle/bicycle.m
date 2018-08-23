@@ -10,6 +10,10 @@ clear;clc;close all;
 %%
 Ts = 0.01;
 T = 0:Ts:10;
+
+l=3;
+lf = 1.4;
+lr =1.6;
 %% initial state
 % secnario design: 
 % inital speed is 5m/s, and it keep constant. 
@@ -107,7 +111,40 @@ alpha_0 = delta_f(i,2);
  psi_0 = psi_1;
 
 end
+%%
+%% linearization of bic_kong model
+x_h = []; y_h = []; x_0 = x_init; y_0 = y_init; psi_0 = psi_init; 
+v_0 =5; alpha_0 = 0;a=0;
 
+
+K = lr/(lf+lr);
+N = K/(1+K^2*(tan(alpha_0))^2)*1/(cos(alpha_0))^2; %beta_dot
+beta_0 = atan(K*tan(alpha_0));
+Ack = [0, 0, -v_0*sin(psi_0+beta_0), cos(psi_0+beta_0); 
+            0 ,0, v_0*cos(psi_0+beta_0), sin(psi_0+beta_0) ;
+            0 ,0 ,0 , 1/lr*sin(beta_0);
+            0,0, 0, 0];
+ Bck = [0, -v_0*sin(psi_0+beta_0)*N;
+            0,  v_0*cos(psi_0+beta_0)*N;
+            0 , -v_0/lr*cos(beta_0)*N;
+            1,0];
+
+csysk = ss(Ack,Bck,[],[]);
+u      = [acc_data ; delta_data ];
+X_0 = [x_0; y_0 ; psi_0; v_0];
+
+[~,t,X] =  lsim(csysk,u,T,X_0);
+
+x_h = X(:,1);
+y_h =X(:,2);
+theta_h =X(:,3);
+v_h = X(:,4);
+
+figure(1)
+plot(x_h,y_h)
+hold on
+
+%%
 figure(1)
 plot(x_h,y_h)
 hold on
