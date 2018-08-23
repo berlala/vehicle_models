@@ -2,8 +2,8 @@
 %% 
 % This script try to test the different bicycle models
 %1) bic_kong.slx: [Kong Model]Kinematic and Dynamic Vehicle Models for
-%Autonomous Driving Control Design; input[a, theta]£»
-%2) bic_lego.slx: traditional bicycle model. input[v, theta]£»
+%Autonomous Driving Control Design; input[a, theta]
+%2) bic_lego.slx: traditional bicycle model. input[v, theta]
 
 %%
 clear;clc;close all;
@@ -20,14 +20,14 @@ psi_init = 0;
 
 v_0 = 5; % initial speed
 
-%% input
+% input
 acc_data = zeros(1,length(T));
 acc = [T;acc_data]';
 
 v_data = ones(1,length(T))*5;
 v = [T;v_data]';
 
-delta_data = [ones(1,length(T)/2+0.5) * 10/180*pi, ones(1,length(T)/2-0.5) * -10/180*pi];      % in rad
+delta_data = [0, ones(1,(length(T)-1)/4)*0,  ones(1,(length(T)-1)/4) * 10/180*pi, ones(1,(length(T)-1)/4) * -10/180*pi, ones(1,(length(T)-1)/4)*0, ];      % in rad
 delta_f= [T;delta_data]';
 %%
 sim bic_kong.slx
@@ -50,21 +50,42 @@ hold on
 grid on;
 %% linearization of bic_lego model
 x_h = []; y_h = []; x_0 = x_init; y_0 = y_init; psi_0 = psi_init; 
-for i = 1: length(T)
+v_0 =5; alpha_0 = 0;
 
-    x_h = [x_h;x_0];
-    y_h = [y_h;y_0];
- 
-v_0 = v(i,2);
-alpha_0 = delta_f(i,2);
-    
-    
- [x_1,y_1,psi_1] = bic_lego_lin(x_0, y_0 ,psi_0, v_0, alpha_0,Ts);
- x_0 =x_1;
- y_0 = y_1;
- psi_0 = psi_1;
+%Wrong Idea
+% for i = 1: length(T)
+% 
+% x_h = [x_h;x_0];
+% y_h = [y_h;y_0];
+% 
+% v_1        = v(i,2);
+% alpha_1 = delta_f(i,2);
+%     
+%  [x_1,y_1,psi_1] = bic_lego_lin(x_0, y_0 ,psi_0, v_0, alpha_0, v_1, alpha_1,Ts);
+%  x_0 =x_1;
+%  y_0 = y_1;
+%  psi_0 = psi_1;
+%  v_0         = v_1;
+% alpha_0 = alpha_1;
+% end
 
-end
+l = 3;
+Ac = [0 0 -v_0*sin(psi_0);
+          0 0 v_0*cos(psi_0);
+           0 0 0];
+Bc = [cos(psi_0) 0;
+          sin(psi_0) 0; 
+          tan(alpha_0)/l, v_0/l/(cos(alpha_0))^2];
+csys = ss(Ac,Bc,[],[]);
+%X_1= Ac*[x_0;y_0;theta_0] + Bc*[v_0;alpha_0]*Ts;
+u      = [v_data ; delta_data ];
+X_0 = [x_0; y_0 ; psi_0];
+
+[~,t,X] =  lsim(csys,u,T,X_0);
+
+x_h = X(:,1);
+y_h =X(:,2);
+theta_h =X(:,3);
 
 figure(1)
 plot(x_h,y_h)
@@ -91,3 +112,4 @@ figure(1)
 plot(x_h,y_h)
 hold on
 legend('Kong Model','Lego Model','Lego Model Lin','Lego Model Dis')
+xlabel('X'); ylabel('Y')
