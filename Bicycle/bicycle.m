@@ -33,26 +33,32 @@ v = [T;v_data]';
 
 delta_data = [0, ones(1,(length(T)-1)/4)*0,  ones(1,(length(T)-1)/4) * 10/180*pi, ones(1,(length(T)-1)/4) * -10/180*pi, ones(1,(length(T)-1)/4)*0, ];      % in rad
 delta_f= [T;delta_data]';
-%%
+%% (1)  kong nonlinear model
 sim bic_kong.slx
 
 figure(1)
 plot(x_state,y_state)
+hold on
+figure(2)
+plot(psi_state)
 hold on
 % figure(2)
 % plot(v_state)
 
 clear x_state y_state
 
-%%
+%% (2) lego nonlinear model
 sim bic_lego.slx
 
 figure(1)
 plot(x_state,y_state)
 hold on
+figure(2)
+plot(psi_state)
+hold on
 
 grid on;
-%% linearization of bic_lego model
+%% (3) linearization of bic_lego model
 x_h = []; y_h = []; x_0 = x_init; y_0 = y_init; psi_0 = psi_init; 
 v_0 =5; alpha_0 = 0;
 
@@ -94,7 +100,10 @@ theta_h =X(:,3);
 figure(1)
 plot(x_h,y_h)
 hold on
-%% Lego discretize
+figure(2)
+plot(theta_h);
+hold on
+%% (4) Lego discretize
 x_h = []; y_h = []; x_0 = x_init; y_0 = y_init; psi_0 = psi_init; 
 for i = 1: length(T)
 
@@ -111,11 +120,15 @@ alpha_0 = delta_f(i,2);
  psi_0 = psi_1;
 
 end
-%%
-%% linearization of bic_kong model
+figure(1)
+plot(x_h,y_h)
+hold on
+figure(2)
+plot(theta_h);
+hold on
+%% (5) linearization of bic_kong model
 x_h = []; y_h = []; x_0 = x_init; y_0 = y_init; psi_0 = psi_init; 
 v_0 =5; alpha_0 = 0;a=0;
-
 
 K = lr/(lf+lr);
 N = K/(1+K^2*(tan(alpha_0))^2)*1/(cos(alpha_0))^2; %beta_dot
@@ -126,7 +139,7 @@ Ack = [0, 0, -v_0*sin(psi_0+beta_0), cos(psi_0+beta_0);
             0,0, 0, 0];
  Bck = [0, -v_0*sin(psi_0+beta_0)*N;
             0,  v_0*cos(psi_0+beta_0)*N;
-            0 , -v_0/lr*cos(beta_0)*N;
+            0 , v_0/lr*cos(beta_0)*N;
             1,0];
 
 csysk = ss(Ack,Bck,[],[]);
@@ -143,10 +156,37 @@ v_h = X(:,4);
 figure(1)
 plot(x_h,y_h)
 hold on
+figure(2)
+plot(theta_h);
+hold on
+%% (6) Kong discretize
+x_h = []; y_h = []; x_0 = x_init; y_0 = y_init; psi_0 = psi_init; 
+for i = 1: length(T)
 
-%%
+    x_h = [x_h;x_0];
+    y_h = [y_h;y_0];
+ 
+a_0 = acc(i,2);
+alpha_0 = delta_f(i,2);
+    
+    
+ [x_1,y_1,psi_1,v_1] = bic_kong_dis(x_0, y_0 ,psi_0, v_0, a_0 ,alpha_0,Ts);
+ x_0 =x_1;
+ y_0 = y_1;
+ psi_0 = psi_1;
+ v_0 =v_1;
+
+end
 figure(1)
 plot(x_h,y_h)
 hold on
-legend('Kong Model','Lego Model','Lego Model Lin','Lego Model Dis')
+figure(2)
+plot(theta_h);
+hold on
+
+%%
+figure(1)
+legend('Kong Nolin','Lego Nonlin','Lego Lin','Lego Dis','Kong Lin','Kong Dis')
 xlabel('X'); ylabel('Y')
+figure(2)
+legend('Kong Nolin','Lego Nonlin','Lego Lin','Lego Dis','Kong Lin','Kong Dis')
