@@ -17,11 +17,12 @@ This model takes the rear wheel steering into account. Assume the velocity is co
 >Yutong Li，Junzhi Zhang, Chen Lv and Ye Yuan, Coordinated control of the steering system and the distributed motors for
 comprehensive optimization of the dynamics performance and the energy
 consumption of an electric vehicle, Part D，2017.  
+
 ![image](https://github.com/berlala/vehicle_models/blob/master/bic_yutong.png)
 
 ## Comparison
-![image](https://github.com/berlala/vehicle_models/blob/master/bic_comp.png)  
-The result show above,
+![image](https://github.com/berlala/vehicle_models/blob/master/bic_comp.png)   
+The result show above,  
 It is obvious the discrete model by [c2d] with a larger error comparing to the linear version. The heading responces are larger than their linear and nonlinear model;  
 <Kong> and <Yutong> model are steering based on the gravity-center angle, thus the lateral distance is smaller than <Lego>;
 The linearization almost have no influence on <Kong> model, but for <Lego> model is very different. 
