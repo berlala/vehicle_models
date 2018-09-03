@@ -22,7 +22,7 @@ consumption of an electric vehicle, Part D，2017.
 
 ## Comparison
 ![image](https://github.com/berlala/vehicle_models/blob/master/bic_comp.png)   
-The result show above,  
+The result shows above,  
 It is obvious the discrete model by [c2d] with a larger error comparing to the linear version. The heading responces are larger than their linear and nonlinear model;  
-<Kong> and <Yutong> model are steering based on the gravity-center angle, thus the lateral distance is smaller than <Lego>;
-The linearization almost have no influence on <Kong> model, but for <Lego> model is very different. 
+\<Kong\> and \<Yutong\> model are steering based on the gravity-center angle, thus the lateral distance is smaller than \<Lego\>;
+The linearization almost have no influence on <Kong> model, but for \<Lego\> model is very different. 
