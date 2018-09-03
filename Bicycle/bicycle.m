@@ -4,25 +4,25 @@
 %1) bic_kong.slx: [Kong Model]Kinematic and Dynamic Vehicle Models for
 %Autonomous Driving Control Design; input[a, theta]
 %2) bic_lego.slx: traditional bicycle model. input[v, theta]
-
 %%
 clear;clc;close all;
 %%
-Ts = 0.01;
+Ts = 0.05;
 T = 0:Ts:10;
 
-l=3;
+
 lf = 1.4;
 lr =1.6;
+l  = lf+ lr; % wheelbase
 %% initial state
 % secnario design: 
 % inital speed is 5m/s, and it keep constant. 
 % the vehicle start to turn left by 10 deg and then turn right by 10 deg.
-x_init = 0;
-y_init = 0;
+x_init    = 0;
+y_init    = 0;
 psi_init = 0;
 
-v_0 = 5; % initial speed
+v_0 = 2; % initial speed
 
 % input
 acc_data = zeros(1,length(T));
@@ -33,6 +33,8 @@ v = [T;v_data]';
 
 delta_data = [0, ones(1,(length(T)-1)/4)*0,  ones(1,(length(T)-1)/4) * 10/180*pi, ones(1,(length(T)-1)/4) * -10/180*pi, ones(1,(length(T)-1)/4)*0, ];      % in rad
 delta_f= [T;delta_data]';
+% delta_data = [0, ones(1,(length(T)-1)/2)*0,  ones(1,(length(T)-1)/2) * 10/180*pi ];      % in rad
+% delta_f= [T;delta_data]';
 %% (1)  kong nonlinear model
 sim bic_kong.slx
 
@@ -79,7 +81,6 @@ v_0 =5; alpha_0 = 0;
 % alpha_0 = alpha_1;
 % end
 
-l = 3;
 Ac = [0 0 -v_0*sin(psi_0);
           0 0 v_0*cos(psi_0);
            0 0 0];
@@ -107,12 +108,11 @@ hold on
 x_h = []; y_h = []; x_0 = x_init; y_0 = y_init; psi_0 = psi_init; 
 for i = 1: length(T)
 
-    x_h = [x_h;x_0];
-    y_h = [y_h;y_0];
+x_h = [x_h;x_0];
+y_h = [y_h;y_0];
  
 v_0 = v(i,2);
 alpha_0 = delta_f(i,2);
-    
     
  [x_1,y_1,psi_1] = bic_lego_dis(x_0, y_0 ,psi_0, v_0, alpha_0,Ts);
  x_0 =x_1;
@@ -163,12 +163,11 @@ hold on
 x_h = []; y_h = []; x_0 = x_init; y_0 = y_init; psi_0 = psi_init; 
 for i = 1: length(T)
 
-    x_h = [x_h;x_0];
-    y_h = [y_h;y_0];
+ x_h = [x_h;x_0];
+ y_h = [y_h;y_0];
  
 a_0 = acc(i,2);
 alpha_0 = delta_f(i,2);
-    
     
  [x_1,y_1,psi_1,v_1] = bic_kong_dis(x_0, y_0 ,psi_0, v_0, a_0 ,alpha_0,Ts);
  x_0 =x_1;
@@ -186,7 +185,9 @@ hold on
 
 %%
 figure(1)
-legend('Kong Nolin','Lego Nonlin','Lego Lin','Lego Dis','Kong Lin','Kong Dis')
+legend('Kong Nonlin','Lego Nonlin','Lego Lin','Lego Dis','Kong Lin','Kong Dis')
+grid on;
 xlabel('X'); ylabel('Y')
 figure(2)
-legend('Kong Nolin','Lego Nonlin','Lego Lin','Lego Dis','Kong Lin','Kong Dis')
+ylabel('Steering Angle [rad]')
+legend('Kong Nonlin','Lego Nonlin','Lego Lin','Lego Dis','Kong Lin','Kong Dis')

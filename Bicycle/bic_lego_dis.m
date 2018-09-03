@@ -10,11 +10,11 @@ function [x_1,y_1,theta_1] = bic_lego_dis(x_0, y_0 ,theta_0, v_0, alpha_0,Ts)
 
 l = 3;
 
-Ac = [0 0 -v_0*sin(theta_0);
-          0 0 v_0*cos(theta_0);
-           0 0 0];
-Bc = [cos(theta_0) 0;
-          sin(theta_0) 0; 
+Ac = [0, 0, -v_0*sin(theta_0);
+          0, 0, v_0*cos(theta_0);
+          0, 0, 0];
+Bc = [cos(theta_0), 0;
+          sin(theta_0), 0; 
           tan(alpha_0)/l, v_0/l/(cos(alpha_0))^2];
 csys = ss(Ac,Bc,[],[]); % continue state-space lin model
 dsys = c2d(csys,Ts); %discrete model
