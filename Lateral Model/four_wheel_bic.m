@@ -15,6 +15,9 @@
 % parameters
 %Vx = 2;
 
+x_init =0;
+y_init = 0;
+psi_init = 0;
 Ts = 0.05;
 T = 0:Ts:10;
 
@@ -22,7 +25,6 @@ T = 0:Ts:10;
 delta_data = [0, ones(1,(length(T)-1)/4)*0,  ones(1,(length(T)-1)/4) * 10/180*pi, ones(1,(length(T)-1)/4) * -10/180*pi, ones(1,(length(T)-1)/4)*0, ];      % in rad
 delta_f= [T;delta_data]';
 delta_r = [T; zeros(1,length(T))]';
-
 
 sim bic_yutong.slx;
 
@@ -32,6 +34,8 @@ plot(T, delta_data); hold on;
 plot(T, beta_state); 
 legend('Front Wheel Steering Cmd[rad]','Gravity-Center Steering Response')
 
-
+%%  Kinematic Response
+figure(2)
+plot(x_state, y_state)
 
 

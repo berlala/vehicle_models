@@ -28,7 +28,7 @@ v_0 = 2; % initial speed
 acc_data = zeros(1,length(T));
 acc = [T;acc_data]';
 
-v_data = ones(1,length(T))*5;
+v_data = ones(1,length(T))*v_0;
 v = [T;v_data]';
 
 delta_data = [0, ones(1,(length(T)-1)/4)*0,  ones(1,(length(T)-1)/4) * 10/180*pi, ones(1,(length(T)-1)/4) * -10/180*pi, ones(1,(length(T)-1)/4)*0, ];      % in rad
@@ -61,8 +61,7 @@ hold on
 
 grid on;
 %% (3) linearization of bic_lego model
-x_h = []; y_h = []; x_0 = x_init; y_0 = y_init; psi_0 = psi_init; 
-v_0 =5; alpha_0 = 0;
+x_h = []; y_h = []; x_0 = x_init; y_0 = y_init; psi_0 = psi_init;  alpha_0 = 0;
 
 %Wrong Idea
 % for i = 1: length(T)
@@ -128,7 +127,7 @@ plot(theta_h);
 hold on
 %% (5) linearization of bic_kong model
 x_h = []; y_h = []; x_0 = x_init; y_0 = y_init; psi_0 = psi_init; 
-v_0 =5; alpha_0 = 0;a=0;
+alpha_0 = 0;a=0;
 
 K = lr/(lf+lr);
 N = K/(1+K^2*(tan(alpha_0))^2)*1/(cos(alpha_0))^2; %beta_dot
@@ -182,12 +181,21 @@ hold on
 figure(2)
 plot(theta_h);
 hold on
+%% (7) Yutong Model Kinematic 
+delta_f= [T;delta_data]';
+delta_r = [T; zeros(1,length(T))]';
+
+sim bic_yutong.slx;
+figure(1)
+plot(x_state,y_state)
+hold on
+
 
 %%
 figure(1)
-legend('Kong Nonlin','Lego Nonlin','Lego Lin','Lego Dis','Kong Lin','Kong Dis')
+legend('Kong Nonlin','Lego Nonlin','Lego Lin','Lego Dis','Kong Lin','Kong Dis', 'Yutong Non')
 grid on;
 xlabel('X'); ylabel('Y')
 figure(2)
 ylabel('Steering Angle [rad]')
-legend('Kong Nonlin','Lego Nonlin','Lego Lin','Lego Dis','Kong Lin','Kong Dis')
+legend('Kong Nonlin','Lego Nonlin','Lego Lin','Lego Dis','Kong Lin','Kong Dis', 'Yutong Non')
